@@ -10,13 +10,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --tag webapp
+      run: docker build . --tag gcr.io/hostspacecloud/webapp
 
     - name: Login to Google Cloud
       uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.GCP_SA }}'
 
+    - name: Push to Google Container Registry (GCR)
+      run: docker push gcr.io/hostspacecloud/webapp        
+
     - name: Deploy to CloudRun
       run: |
-        gcloud run deploy webapp --region europe-west1 --image webapp --platform managed --allow-unauthenticated --project hostspacecloud
+        gcloud run deploy webapp --region europe-west1 --image gcr.io/hostspacecloud/webapp --platform managed --allow-unauthenticated --project hostspacecloud
