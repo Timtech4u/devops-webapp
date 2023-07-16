@@ -12,3 +12,11 @@ jobs:
     - name: Build the Docker image
       run: docker build . --tag webapp
 
+    - name: Login to Google Cloud
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_SA }}'
+
+    - name: Deploy to CloudRun
+      run: |
+        gcloud run deploy webapp --region europe-west1 --image webapp --platform managed --allow-unauthenticated --project hostspacecloud
